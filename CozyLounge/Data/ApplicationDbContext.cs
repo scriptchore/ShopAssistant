@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CozyLounge.Models
+namespace CozyLounge.Data
 {
-    public class SalesPerson : BaseEntity
+    public class ApplicationDbContext
     {
 
     }
