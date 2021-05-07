@@ -23,7 +23,7 @@ namespace CozyLounge.Models
 
         [Required(ErrorMessage = "Please enter Password.")]
         public string Password { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
 
         public virtual ICollection<Transactions> Transactions { get; set; }
     }

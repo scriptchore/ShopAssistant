@@ -30,6 +30,10 @@
             </div>
             <!-- End Page-content -->
 
+            <div class="loaderbody" id="loaderbody">
+                <div class="loader"></div>
+            </div>
+
             @Html.Partial("~/Views/Shared/_footer.cshtml")
         </div>
         <!-- end main content-->
@@ -45,6 +49,8 @@
 
     @RenderSection("scripts", required: false)
 
+    <script src="~/assets/js/app.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
 
 </body>
 

@@ -1,0 +1,54 @@
+﻿@model IEnumerable<CozyLounge.Models.SalesPersons>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Users</h1>
+
+@*<p>
+        <a asp-action="Create">Create New</a>
+    </p>*@
+
+<div class="row mb-2">
+    <div class="col-sm-4">
+        <div class="search-box mr-2 mb-2 d-inline-block">
+            <div class="position-relative">
+                <input type="text" class="form-control" placeholder="Search...">
+                <i class="bx bx-search-alt search-icon"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-8">
+        <div class="text-sm-right">
+            <a onclick="showInPopup('@Url.Action("AddOrEdit","Admin",null,Context.Request.Scheme)','New User')" class="btn btn-success btn-rounded waves-effect waves-light mb-2 mr-2"><i class="mdi mdi-plus mr-1"></i> New Customers</a>
+        </div>
+    </div><!-- end col-->
+</div>
+<div id="view-users">
+    @await Html.PartialAsync("_ViewUsers", Model)
+</div>
+
+
+
+<div class="modal" tabindex="-1" id="user_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                
+            </div>
+        
+        </div>
+    </div>
+</div>
+@section Scripts{
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+

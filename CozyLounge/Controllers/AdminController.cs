@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CozyLounge.Data;
 using CozyLounge.Models;
+using static CozyLounge.Helper;
 
 namespace CozyLounge.Controllers
 {
@@ -20,7 +21,13 @@ namespace CozyLounge.Controllers
         }
 
         // GET: Admin
-        public async Task<IActionResult> Index()
+        public  IActionResult Index()
+        {
+            return View();
+        }
+
+        // GET: Users
+        public async Task<IActionResult> Users()  
         {
             return View(await _context.SalesPersons.ToListAsync());
         }
@@ -44,9 +51,25 @@ namespace CozyLounge.Controllers
         }
 
         // GET: Admin/Create
-        public IActionResult Create()
+        [NoDirectAccess] 
+        public async Task<IActionResult> AddOrEdit(int id = 0)   
         {
-            return View();
+            if(id == 0)
+            {
+                return View(new SalesPersons());
+            }
+            else
+            {
+                var salesPersons = await _context.SalesPersons.FindAsync(id);
+                if (salesPersons == null)
+                {
+                    return NotFound();
+                }
+                return View(salesPersons);
+            }
+
+
+            
         }
 
         // POST: Admin/Create
@@ -54,45 +77,8 @@ namespace CozyLounge.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("SalesPersonId,CreatedAt,FullName,UserName,IsAdmin,Phone,Gender,Address,Password,IsActive")] SalesPersons salesPersons)
+        public async Task<IActionResult> AddOrEdit(int id, [Bind("SalesPersonId,CreatedAt,FullName,UserName,IsAdmin,Phone,Gender,Address,Password,IsActive")] SalesPersons salesPersons)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(salesPersons);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(salesPersons);
-        }
-
-        // GET: Admin/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var salesPersons = await _context.SalesPersons.FindAsync(id);
-            if (salesPersons == null)
-            {
-                return NotFound();
-            }
-            return View(salesPersons);
-        }
-
-        // POST: Admin/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("SalesPersonId,CreatedAt,FullName,UserName,IsAdmin,Phone,Gender,Address,Password,IsActive")] SalesPersons salesPersons)
-        {
-            if (id != salesPersons.SalesPersonId)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 try
@@ -111,28 +97,13 @@ namespace CozyLounge.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return Json(new { isValid = true, html = Helper.RenderRazorViewToString(this, "_ViewUsers", _context.SalesPersons.ToList()) });
+
             }
-            return View(salesPersons);
+            return Json(new { isValid = false, html = Helper.RenderRazorViewToString(this, "AddOrEdit", salesPersons) });
         }
 
-        // GET: Admin/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var salesPersons = await _context.SalesPersons
-                .FirstOrDefaultAsync(m => m.SalesPersonId == id);
-            if (salesPersons == null)
-            {
-                return NotFound();
-            }
-
-            return View(salesPersons);
-        }
 
         // POST: Admin/Delete/5
         [HttpPost, ActionName("Delete")]
@@ -142,7 +113,7 @@ namespace CozyLounge.Controllers
             var salesPersons = await _context.SalesPersons.FindAsync(id);
             _context.SalesPersons.Remove(salesPersons);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return Json(new { html = Helper.RenderRazorViewToString(this, "_ViewUsers", _context.SalesPersons.ToList()) });
         }
 
         private bool SalesPersonsExists(int id)
